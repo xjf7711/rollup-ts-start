@@ -21,32 +21,34 @@ import replace from "rollup-plugin-replace";
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
 const production = !process.env.ROLLUP_WATCH;
-
-const projectRootDir = path.resolve(__dirname);
-import packageJSON from './package.json'
+import { fileURLToPath } from 'url'
+const __filenameNew = fileURLToPath(import.meta.url)
+const __dirnameNew = path.dirname(__filenameNew)
+const projectRootDir = path.resolve(__dirnameNew);
+// import packageJSON from './package.json' assert { type: "json" };
 
 const customResolver = nodeResolve({
   extensions: ['.mjs', '.js', '.jsx', '.json', '.sass', '.scss']
 });
 
 // 需要导出的模块类型
-const outputMap = [
-  {
-    file: packageJSON.main, // 通用模块
-    format: 'esnext',
-  },
-  {
-    file: packageJSON.module, // es6模块
-    format: 'es',
-  }
-]
+// const outputMap = [
+//   {
+//     file: packageJSON.main, // 通用模块
+//     format: 'esnext',
+//   },
+//   {
+//     file: packageJSON.module, // es6模块
+//     format: 'es',
+//   }
+// ]
 const silence = new Map()
 
 export default {
-  input: path.resolve(__dirname, 'src/main.ts'),//入口文件
+  input: path.resolve(__dirnameNew, 'src/main.ts'),//入口文件
   output:[
     {
-      file: path.resolve(__dirname, 'dist/bundle.js'),//打包后的存放文件
+      file: path.resolve(__dirnameNew, 'dist/bundle.js'),//打包后的存放文件
       // global: 弄个全局变量来接收
       // cjs: module.exports
       // esm: export default
@@ -127,7 +129,7 @@ export default {
       runtimeHelpers: true,
     }),
     ts({
-      tsconfig: path.resolve(__dirname, 'tsconfig.json')
+      tsconfig: path.resolve(__dirnameNew, 'tsconfig.json')
     }),
     // todo
     postcss({
@@ -138,7 +140,7 @@ export default {
       extract: 'css/index.css' // 配置了extract，就会将css抽离成单独的文件。
     }),
     serve({
-      port: 3388,//端口号，默认10001
+      port: 10008,//端口号，默认10001
       contentBase: '', // 表示起的服务是在根目录下  //服务器启动的文件夹，默认是项目根目录，需要在该文件下创建index.html
       openPage: '/public/index.html', // 打开的是哪个文件
       // open: true // 默认打开浏览器
